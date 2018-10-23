@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="~/img/basic/favicon.ico" type="image/x-icon">
+    <title>Effective Box, Pallet, Container Packing Algorithm - 3D Bin Packing</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/css/app.css">
+    <script src="~/js/vendor/jquery.js"></script>
+    <script src="~/js/vendor/bootstrap.min.js"></script>
+    <script src="~/js/vendor/ko.js"></script>
+    <script src="~/js/vendor/ko-mapping.js"></script>
+    <script src="~/js/vendor/three-min.js"></script>
+    <script src="~/js/vendor/orbit-controls.js"></script>
+    <script src="~/js/container-packing.js"></script>
+</head>
+<body class="light sidebar-mini sidebar-collapse">
+    <!-- Pre loader -->
+    <div id="loader" class="loader">
+        <div class="plane-container">
+            <div class="preloader-wrapper small active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="app">
+        <aside class="main-sidebar fixed offcanvas b-r sidebar-tabs" data-toggle='offcanvas'>
+            <div class="sidebar">
+                <div class="d-flex hv-100 align-items-stretch">
+                    <div class="indigo text-white">
+                        <div class="nav mt-5 pt-5 flex-column nav-pills" id="v-pills-tab" role="tablist"
+                             aria-orientation="vertical">
+                            <a class="nav-link blink skin_handle" href="#"><i class="icon-package"></i></a>
+                            <a href="">
+                                <figure class="avatar">
+                                    <img src="assets/img/dummy/u3.png" alt="">
+                                    <span class="avatar-badge online"></span>
+                                </figure>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="tab-content flex-grow-1" id="v-pills-tabContent">
+                        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                             aria-labelledby="v-pills-home-tab">
+                            <div class="relative brand-wrapper sticky b-b">
+                                <div class="d-flex justify-content-between align-items-center p-3">
+                                    <div class="text-xs-center">
+                                        <span class="font-weight-lighter s-18">Navigation</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="sidebar-menu">
+                                <li class="treeview">
+                                    <a href="index.html">
+                                        <i class="icon icon-sailing-boat-water s-24"></i> <span>Dashboard</span>
+                                    </a>
+                                </li>
+                                <li class="treeview">
+                                    <a href="simulator.html">
+                                        <i class="icon icon-package s-24"></i> <span>Simulation</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div class="has-sidebar-left">
+            <div class="pos-f-t">
+                <div class="collapse" id="navbarToggleExternalContent">
+                    <div class="bg-dark pt-2 pb-2 pl-4 pr-2">
+                        <div class="search-bar">
+                            <input class="transparent s-24 text-white b-0 font-weight-lighter w-128 height-50" type="text"
+                                   placeholder="start typing...">
+                        </div>
+                        <a href="#" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-expanded="false"
+                           aria-label="Toggle navigation" class="paper-nav-toggle paper-nav-white active "><i></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="#" data-toggle="push-menu" class="paper-nav-toggle left ml-2 fixed">
+            <i></i>
+        </a>
+        <div class="has-sidebar-left has-sidebar-tabs">
+            <!--navbar-->
+            <div class="sticky white shadow">
+                <div class="navbar navbar-expand d-flex justify-content-between bd-navbar">
+                    <div class="relative">
+                        <div class="d-flex">
+                            <div class="d-none d-md-block">
+                                <h1 class="nav-title">
+                                    <i class="icon-home"></i>
+                                    Homepage
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Top Menu Start -->
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a class="nav-link " data-toggle="collapse" data-target="#navbarToggleExternalContent"
+                                   aria-controls="navbarToggleExternalContent"
+                                   aria-expanded="false" aria-label="Toggle navigation">
+                                    <i class="icon-search3"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--#navbar-->
+            <div class="container-fluid my-3">
+
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">Home</li>
+                    <li class="breadcrumb-item active">Simulation</li>
+                </ol>
+                <div class="row">
+                    <div class="col-md-12 my-auto">
+                        <div class="card my-3 card-block d-flex">
+                            <div class="card-body align-items-center d-flex justify-content-center">
+                                <div>
+                                    <h5 class="card-title">Homepage 3D-Container Simulation</h5>
+                                    <p class="card-text">
+                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 my-auto">
+                        <div class="my-3 card-block d-flex">
+                            <div class="card-body ">
+                                <div class="stepper sw-main"
+                                     data-options='{
+                                     "useURLhash":true,
+                                     "transitionEffect":"fade",
+                                     "toolbarSettings":{
+                                         "showNextButton":false,
+                                         "showPreviousButton":false
+                                         }
+                                     }'>
+                                    <ul class="nav step-anchor">
+                                        <li><a href="#step-11">Algorithms<br><small>Selecting Packing Algorithms</small></a></li>
+                                        <li><a href="#step-22">Items<br><small>Insert Data Items to Pack</small></a></li>
+                                        <li><a href="#step-33">Container<br><small>Insert Containers Data</small></a></li>
+                                    </ul>
+                                    <div class="card no-b  shadow">
+                                        <div id="step-11" class="card-body text-center p-5">
+                                            <h3 class="my-3">
+                                                Algorithms to Use
+                                            </h3>
+                                            <table class="table table-condensed" style="font-size: 14px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="button-column"></th>
+                                                        <th class="algorithm-name-column">Algorithms to Use</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody data-bind="foreach: AlgorithmsToUse">
+                                                    <tr>
+                                                        <td class="button-column"><button class="btn btn-danger btn-sm" data-bind="click: $root.RemoveAlgorithmToUse"><i class="icon icon-trash-can3"></i></button></td>
+                                                        <td class="algorithm-name-column"><p class="form-control-static" data-bind="text: AlgorithmName"></p></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-condensed borderless">
+                                                <tr>
+                                                    <td class="button-column"><button class="btn btn-success btn-sm" data-bind="click: AddAlgorithmToUse"><i class="icon icon-add"></i></button></td>
+                                                    <td class="algorithm-name-column">
+                                                        <select id="algorithm-select" class="form-control">
+                                                            <option value="1">EB-AFIT</option>
+                                                        </select>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                            <a href="#step-22" class="btn btn-primary mb-3 btn-lg">Go To Next Step</a>
+                                        </div>
+                                        <div id="step-22" class="card-body text-center p-5">
+                                            <h3 class="my-3">
+                                                Items to Pack
+                                            </h3>
+                                            <button class="btn btn-default btn-sm" data-bind="click: GenerateItemsToPack">Generate</button>
+                                            <table class="table table-condensed" style="font-size: 14px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="button-column"></th>
+                                                        <th class="text-column">Name</th>
+                                                        <th class="data-column text-center">L</th>
+                                                        <th class="data-column text-center">W</th>
+                                                        <th class="data-column text-center">H</th>
+                                                        <th class="data-column text-center">Qty</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody data-bind="foreach: ItemsToPack">
+                                                    <tr>
+                                                        <td class="button-column"><button class="btn btn-danger btn-sm" data-bind="click: $root.RemoveItemToPack"><i class="icon icon-trash-can3"></i></button></td>
+                                                        <td class="text-column"><input type="text" class="form-control input-sm" data-bind="value: Name" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Length" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Width" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Height" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Quantity" /></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-condensed borderless" style="font-size: 14px;">
+                                                <tr>
+                                                    <td class="button-column"><button class="btn btn-success btn-sm" data-bind="click: AddNewItemToPack"><i class="icon icon-add"></i></button></td>
+                                                    <td class="text-column"><input type="text" class="form-control input-sm" data-bind="value: NewItemToPack.Name" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewItemToPack.Length" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewItemToPack.Width" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewItemToPack.Height" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewItemToPack.Quantity" /></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                            <a href="#step-33" class="btn btn-primary mb-3 btn-lg">Go To Next Step</a>
+                                        </div>
+                                        <div id="step-33" class="card-body text-center p-5">
+                                            <h3 class="my-3">
+                                                Containers
+                                            </h3>
+                                            <button class="btn btn-default btn-sm" data-bind="click: GenerateContainers">Generate</button>
+                                            <button class="btn btn-primary btn-sm" data-bind="click: PackContainers">Pack Em Up</button>
+                                            <table class="table table-condensed" style="font-size: 14px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="button-column"></th>
+                                                        <th class="text-column">Name</th>
+                                                        <th class="data-column text-center">L</th>
+                                                        <th class="data-column text-center">W</th>
+                                                        <th class="data-column text-center">H</th>
+                                                        <th class="button-column gray-cell"></th>
+                                                        <th class="algorithm-name-column">Algorithm<br />Name</th>
+                                                        <th class="data-column text-center">Pack Time<br />(ms)</th>
+                                                        <th class="data-column text-center"><div data-toggle="tooltip" title="% of container volume packed with items">% Cont.<br />Used</div></th>
+                                                        <th class="data-column text-center"># Items<br />Packed</th>
+                                                        <th class="data-column text-center"># Items<br />Unpacked</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody data-bind="foreach: Containers">
+                                                    <tr>
+                                                        <td class="button-column"><button class="btn btn-danger btn-sm" data-bind="click: $root.RemoveContainer"><i class="icon icon-trash-can3"></i></button></td>
+                                                        <td class="text-column"><input type="text" class="form-control input-sm" data-bind="value: Name" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Length" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Width" /></td>
+                                                        <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: Height" /></td>
+                                                        <td class="button-column gray-cell"></td>
+                                                        <td class="algorithm-name-column">
+                                                            <table>
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr><td><p class="form-control-static" data-bind="text: AlgorithmName"></p></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td class="data-column text-center">
+                                                            <table style="margin: auto;">
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr><td><p class="form-control-static" data-bind="text: PackTimeInMilliseconds"></p></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td class="data-column text-center">
+                                                            <table style="margin: auto;">
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr><td><p class="form-control-static" data-bind="text: PercentContainerVolumePacked"></p></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td class="data-column">
+                                                            <table style="width: 100%">
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr class="text-center"><td data-bind="css: UnpackedItems.length == 0 && PackedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: PackedItems.length"></p></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td class="data-column">
+                                                            <table style="width: 100%">
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr class="text-center"><td data-bind="css: UnpackedItems.length == 0 && PackedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: UnpackedItems.length"></p></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td class="data-column text-right">
+                                                            <table style="margin-left: auto;">
+                                                                <tbody data-bind="foreach: AlgorithmPackingResults">
+                                                                    <tr><td><button class="btn btn-link" data-toggle="modal" data-target=".render-modal" data-bind="click: $root.ShowPackingView.bind($parent)">&nbsp;<span class="glyphicon glyphicon-camera"></span>&nbsp;</button></td></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-condensed borderless" style="font-size: 14px;">
+                                                <tr>
+                                                    <td class="button-column"><button class="btn btn-success btn-sm" data-bind="click: AddNewContainer"><i class="icon icon-add"></i></button></td>
+                                                    <td class="text-column"><input type="text" class="form-control input-sm" data-bind="value: NewContainer.Name" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewContainer.Length" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewContainer.Width" /></td>
+                                                    <td class="data-column text-center"><input type="text" class="form-control input-sm text-center" data-bind="value: NewContainer.Height" /></td>
+                                                    <td></td>
+                                                </tr>
+                                            </table>
+                                            <a href="#step-44" class="btn btn-primary mb-3 btn-lg">Go To Next Step</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="control-sidebar-bg shadow white fixed"></div>
+    </div>
+    <!--/#app -->
+    <script src="~/js/app.js"></script>
+</body>
+</html>
