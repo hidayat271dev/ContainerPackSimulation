@@ -11,6 +11,9 @@ async function PackContainers(request) {
 		type: 'POST',
 		data: request,
 		contentType: 'application/json; charset=utf-8'
+		// success: function (data) {
+		// 	console.log(data);
+	 //    }
 	});
 };
 
@@ -191,9 +194,17 @@ var ViewModel = function () {
 			.then(response => {
 				// Tie this response back to the correct containers.
 				response.forEach(containerPackingResult => {
+
+					var result = containerPackingResult;
+
 					self.Containers().forEach(container => {
-						if (container.ID() == containerPackingResult.ContainerID) {
-							container.AlgorithmPackingResults(containerPackingResult.AlgorithmPackingResults);
+
+						if (container.ID() == result.containerID) {
+							console.log("Masuk brayyy");
+							console.log(container);
+							console.log(result);
+							console.log(result.algorithmPackingResults);
+							container.AlgorithmPackingResults(result.algorithmPackingResults);
 						}
 					});
 				});
@@ -201,7 +212,6 @@ var ViewModel = function () {
 	};
 	
 	self.ShowPackingView = function (algorithmPackingResult) {
-        console.log("Process");
 		var container = this;
 		var selectedObject = scene.getObjectByName('container');
 		scene.remove( selectedObject );
@@ -213,7 +223,7 @@ var ViewModel = function () {
 		
 		camera.position.set(container.Length(), container.Length(), container.Length());
 
-		self.ItemsToRender(algorithmPackingResult.PackedItems);
+		self.ItemsToRender(algorithmPackingResult.packedItems);
 		self.LastItemRenderedIndex(-1);
 
 		self.ContainerOriginOffset.x = -1 * container.Length() / 2;
@@ -247,19 +257,22 @@ var ViewModel = function () {
 
 	self.PackItemInRender = function () {
 		var itemIndex = self.LastItemRenderedIndex() + 1;
+		console.log(self.ItemsToRender());
 
 		var itemOriginOffset = {
-			x: self.ItemsToRender()[itemIndex].PackDimX / 2,
-			y: self.ItemsToRender()[itemIndex].PackDimY / 2,
-			z: self.ItemsToRender()[itemIndex].PackDimZ / 2
+			x: self.ItemsToRender()[itemIndex].packDimX / 2,
+			y: self.ItemsToRender()[itemIndex].packDimY / 2,
+			z: self.ItemsToRender()[itemIndex].packDimZ / 2
 		};
 
-		var itemGeometry = new THREE.BoxGeometry(self.ItemsToRender()[itemIndex].PackDimX, self.ItemsToRender()[itemIndex].PackDimY, self.ItemsToRender()[itemIndex].PackDimZ);
+		var itemGeometry = new THREE.BoxGeometry(self.ItemsToRender()[itemIndex].packDimX, self.ItemsToRender()[itemIndex].packDimY, self.ItemsToRender()[itemIndex].packDimZ);
 		var cube = new THREE.Mesh(itemGeometry, itemMaterial);
-		cube.position.set(self.ContainerOriginOffset.x + itemOriginOffset.x + self.ItemsToRender()[itemIndex].CoordX, self.ContainerOriginOffset.y + itemOriginOffset.y + self.ItemsToRender()[itemIndex].CoordY, self.ContainerOriginOffset.z + itemOriginOffset.z + self.ItemsToRender()[itemIndex].CoordZ);
+		console.log(self.ContainerOriginOffset);
+		cube.position.set(self.ContainerOriginOffset.x + itemOriginOffset.x + self.ItemsToRender()[itemIndex].coordX, self.ContainerOriginOffset.y + itemOriginOffset.y + self.ItemsToRender()[itemIndex].coordY, self.ContainerOriginOffset.z + itemOriginOffset.z + self.ItemsToRender()[itemIndex].coordZ);
 		cube.name = 'cube' + itemIndex;
-		scene.add( cube );
-
+		scene.add(cube);
+		console.log(scene);
+		console.log(cube);
 		self.LastItemRenderedIndex(itemIndex);
 	};
 

@@ -151,7 +151,6 @@
             </div>
             <!--#navbar-->
             <div class="container-fluid my-3">
-
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">Home</li>
                     <li class="breadcrumb-item active">Simulation</li>
@@ -303,42 +302,42 @@
                                                         <td class="algorithm-name-column">
                                                             <table>
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr><td><p class="form-control-static" data-bind="text: AlgorithmName"></p></td></tr>
+                                                                    <tr><td><p class="form-control-static" data-bind="text: algorithmName"></p></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
                                                         <td class="data-column text-center">
                                                             <table style="margin: auto;">
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr><td><p class="form-control-static" data-bind="text: PackTimeInMilliseconds"></p></td></tr>
+                                                                    <tr><td><p class="form-control-static" data-bind="text: packTimeInMilliseconds"></p></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
                                                         <td class="data-column text-center">
                                                             <table style="margin: auto;">
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr><td><p class="form-control-static" data-bind="text: PercentContainerVolumePacked"></p></td></tr>
+                                                                    <tr><td><p class="form-control-static" data-bind="text: percentContainerVolumePacked"></p></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
                                                         <td class="data-column">
                                                             <table style="width: 100%">
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr class="text-center"><td data-bind="css: UnpackedItems.length == 0 && PackedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: PackedItems.length"></p></td></tr>
+                                                                    <tr class="text-center"><td data-bind="css: unpackedItems.length == 0 && packedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: packedItems.length"></p></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
                                                         <td class="data-column">
                                                             <table style="width: 100%">
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr class="text-center"><td data-bind="css: UnpackedItems.length == 0 && PackedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: UnpackedItems.length"></p></td></tr>
+                                                                    <tr class="text-center"><td data-bind="css: unpackedItems.length == 0 && packedItems.length != 0 ? 'bg-success' : ''"><p class="form-control-static" data-bind="text: unpackedItems.length"></p></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
                                                         <td class="data-column text-right">
                                                             <table style="margin-left: auto;">
                                                                 <tbody data-bind="foreach: AlgorithmPackingResults">
-                                                                    <tr><td><button class="btn btn-link" data-toggle="modal" data-target=".render-modal" data-bind="click: $root.ShowPackingView.bind($parent)">&nbsp;<span class="glyphicon glyphicon-camera"></span>&nbsp;</button></td></tr>
+                                                                    <tr><td><button class="btn btn-link" data-toggle="modal" data-target=".render-modal" data-bind="click: $root.ShowPackingView.bind($parent)">&nbsp;<span class="icon icon-eye2"></span>&nbsp;</button></td></tr>
                                                                 </tbody>
                                                             </table>
                                                         </td>
@@ -368,6 +367,17 @@
         <div class="control-sidebar-bg shadow white fixed"></div>
     </div>
     <!--/#app -->
+    <div class="modal fade render-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="margin-bottom: 30px;">
+                <div id="drawing-container" style="margin-top: 30px; text-align: center;"></div>
+                <div class="text-center">
+                    <button class="btn btn-default" data-bind="click: UnpackItemInRender, enable: AreItemsPacked()"><span class="icon icon-arrow-circle-left"></span></button>
+                    <button class="btn btn-default" data-bind="click: PackItemInRender, disable: AreAllItemsPacked()"><span class="icon icon-arrow-circle-right"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="~/js/app.js"></script>
 </body>
 </html>
